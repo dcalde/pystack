@@ -11,7 +11,16 @@ import functools
 import codecs
 import locale
 
-import click
+import argparse
+
+parser = argparse.ArgumentParser(description='Tool to print python thread and greenlet stacks')
+parser.add_argument('pid', required=True, type=int)
+parser.add_argument('-d', '--debugger', help="Options: gdb, lldb")
+parser.add_argument('--include-greenlet', action='store_true',
+                    help='Also print greenlet stacks')
+parser.add_argument('-v', '--verbose', action='store_true',
+                    help='Verbosely print error and warnings')
+args = parser.parse_args()
 
 
 FILE_OPEN_COMMAND = r'f = open(\"%s\", \"w\")'
@@ -25,7 +34,8 @@ GREENLET_STACK_COMMANDS = [
     r'import gc,greenlet,traceback',
     r'objs=[ob for ob in gc.get_objects() if '
     r'isinstance(ob,greenlet.greenlet) if ob]',
-    r'f.write(\"\\nDumping Greenlets....\\n\\n\\n\")',
+    r'f.write(\"\\nDumpin'
+    r'g Greenlets....\\n\\n\\n\")',
     r'f.write(\"\\n---------------\\n\\n\".join('
     r'\"\".join(traceback.format_stack(o.gr_frame)) for o in objs))',
 ]
@@ -103,23 +113,15 @@ def print_stack(pid, include_greenlet=False, debugger=None, verbose=False):
     sys_stdout.flush()
 
 
-CONTEXT_SETTINGS = {
-    'help_option_names': ['-h', '--help'],
-}
-
-
-@click.command(context_settings=CONTEXT_SETTINGS)
-@click.argument('pid', required=True, type=int)
-@click.option('--include-greenlet', default=False, is_flag=True,
-              help="Also print greenlet stacks")
-@click.option('-d', '--debugger', type=click.Choice(['gdb', 'lldb']))
-@click.option('-v', '--verbose', default=False, is_flag=True,
-              help="Verbosely print error and warnings")
 def cli_main(pid, include_greenlet, debugger, verbose):
     '''Print stack of python process.
 
     $ pystack <pid>
     '''
+    pid = args.pid
+    include_greenlet = args.include_greenlet
+    debugger = args.debugger
+    verbose = args.verbose
     return print_stack(pid, include_greenlet, debugger, verbose)
 
 
