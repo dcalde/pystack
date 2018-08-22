@@ -113,7 +113,7 @@ def print_stack(pid, include_greenlet=False, debugger=None, verbose=False):
     sys_stdout.flush()
 
 
-def cli_main(pid, include_greenlet, debugger, verbose):
+def cli_main():
     '''Print stack of python process.
 
     $ pystack <pid>
