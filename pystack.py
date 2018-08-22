@@ -14,7 +14,7 @@ import locale
 import argparse
 
 parser = argparse.ArgumentParser(description='Tool to print python thread and greenlet stacks')
-parser.add_argument('pid', required=True, type=int)
+parser.add_argument('pid', type=int)
 parser.add_argument('-d', '--debugger', help="Options: gdb, lldb")
 parser.add_argument('--include-greenlet', action='store_true',
                     help='Also print greenlet stacks')
